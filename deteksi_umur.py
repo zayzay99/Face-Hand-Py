@@ -7,10 +7,9 @@ FACE_PROTO = "model/deploy.prototxt.txt"
 FACE_MODEL = "model/res10_300x300_ssd_iter_140000.caffemodel"
 AGE_PROTO = "model/age_deploy.prototxt"
 AGE_MODEL = "model/age_net.caffemodel"
-
-AGE_BUCKETS = ["(0-2)", "(4-6)", "(8-12)", "(15-20)", "(25-32)", "(38-43)", "(48-53)", "(60-100)"]
 MODEL_MEAN_VALUES = (78.42633776, 87.76891437, 114.89584775)
 
+AGE_BUCKETS = ["(0-2)", "(4-6)", "(8-12)", "(15-20)", "(25-32)", "(38-43)", "(48-53)", "(60-100)"]
 
 CONFIDENCE_THRESHOLD = 0.5  
 PADDING = 20                
@@ -61,6 +60,8 @@ def process_frame(frame, face_net, age_net):
 
             age_net.setInput(face_blob)
             preds = age_net.forward()
+            
+            # Logika untuk model lama (menggunakan rentang umur)
             age_range = AGE_BUCKETS[preds[0].argmax()]
 
             text = f"Umur: {age_range}"

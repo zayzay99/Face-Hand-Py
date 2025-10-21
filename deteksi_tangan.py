@@ -34,23 +34,25 @@ while True:
 
             hand_label = results.multi_handedness[hand_idx].classification[0].label
             fingers_up_for_hand = []
-            if hand_label == "Right":
-                if hand_landmarks.landmark[tip_ids[0]].x < hand_landmarks.landmark[tip_ids[0] - 1].x:
-                    fingers_up_for_hand.append(1)
-                else:
-                    fingers_up_for_hand.append(0)
-            else: 
-                if hand_landmarks.landmark[tip_ids[0]].x > hand_landmarks.landmark[tip_ids[0] - 1].x:
-                    fingers_up_for_hand.append(1)
-                else:
-                    fingers_up_for_hand.append(0)
+            
+            thumb_tip = hand_landmarks.landmark[tip_ids[0]]
+            thumb_ip = hand_landmarks.landmark[tip_ids[0] - 1] 
+            index_finger_mcp = hand_landmarks.landmark[tip_ids[1] - 3] 
+
             for i in range(1, 5):
                 if hand_landmarks.landmark[tip_ids[i]].y < hand_landmarks.landmark[tip_ids[i] - 2].y:
                     fingers_up_for_hand.append(1)
                 else:
                     fingers_up_for_hand.append(0)
+                 
+            num_other_fingers = fingers_up_for_hand.count(1)
             
-            total_fingers += fingers_up_for_hand.count(1)
+            if (hand_label == "Right" and thumb_tip.x < thumb_ip.x) or \
+               (hand_label == "Left" and thumb_tip.x > thumb_ip.x):
+                total_fingers += (1 + num_other_fingers)
+            else:
+                total_fingers += num_other_fingers
+
     cv2.putText(frame, str(total_fingers), (50, 100), cv2.FONT_HERSHEY_PLAIN, 5, (0, 0, 255), 5)
 
     cv2.imshow("Deteksi Tangan dan Jari (Tekan 'q' untuk keluar)", frame)
