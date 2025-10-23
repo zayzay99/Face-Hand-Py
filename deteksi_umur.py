@@ -60,8 +60,6 @@ def process_frame(frame, face_net, age_net):
 
             age_net.setInput(face_blob)
             preds = age_net.forward()
-            
-            # Logika untuk model lama (menggunakan rentang umur)
             age_range = AGE_BUCKETS[preds[0].argmax()]
 
             text = f"Umur: {age_range}"
